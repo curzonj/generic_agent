@@ -1,5 +1,6 @@
 require "generic_agent/version"
 require 'generic_agent/utilities'
+require 'generic_agent/agent_config'
 require 'generic_agent/loader'
 require 'generic_agent/agent'
 require 'generic_agent/periodic'
@@ -9,7 +10,7 @@ module GenericAgent
 
   class << self
 
-    attr_writer :instance
+    attr_accessor :instance
 
     def configure
       self.instance = Loader.new.tap do |loader|
