@@ -1,20 +1,32 @@
-class LocalScheduler < Scope
+require 'eventmachine'
 
-  def initialize(source)
-    @source = source
-  end
+module GenericAgent
+  class LocalScheduler
+    include Utilities
 
-  def run
-    EM.run do
-      @source.checks do |check|
-        check.run
+    def initialize(source)
+      @source = source
+    end
 
-        log.info "Scheduling #{check.name} every #{check.every} seconds"
-        EventMachine::PeriodicTimer.new(check.every) do
-          EM.defer { check.run }
+    def shutdown_em
+      log.info "Shutting down..."
+      EM.stop
+    end
+
+    def run
+      EM.run do
+        trap("INT") { shutdown_em }
+
+        @source.periodic do |instance|
+          instance.run
+
+          log.info "Scheduling #{instance.name} every #{instance.interval} seconds"
+          EventMachine::PeriodicTimer.new(instance.interval) do
+            EM.defer { instance.run }
+          end
         end
       end
     end
-  end
 
+  end
 end

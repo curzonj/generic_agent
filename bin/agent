@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'generic_agent'
+require 'generic_agent/cli'
+
+GenericAgent::CLI.start
