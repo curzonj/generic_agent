@@ -37,7 +37,7 @@ module GenericAgent
         klass = new_agent(Periodic)
         klass.load_from(file, segments)
 
-        @agents << klass.instances
+        @agents += klass.instances
       end
     end
 

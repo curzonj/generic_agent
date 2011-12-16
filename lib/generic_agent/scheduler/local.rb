@@ -27,6 +27,7 @@ module GenericAgent
               EM.defer { agent.run }
             end
           else
+            log.debug "Received unknown #{agent.inspect}"
             raise NotImplementedError
           end
         end
