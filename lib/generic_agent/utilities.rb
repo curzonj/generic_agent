@@ -2,12 +2,22 @@ require 'logger'
 
 module Utilities
 
-  def self.included(base)
-    base.send(:extend, ClassMethods)
-  end
+  class << self
+    def included(base)
+      base.send(:extend, ClassMethods)
+    end
 
-  def self.log
-    @logger ||= Logger.new(STDERR)
+    def log=(logger)
+      @logger = logger
+    end
+
+    def debug!
+      log.level = 0
+    end
+
+    def log
+      @logger ||= Logger.new(STDERR)
+    end
   end
 
   module ClassMethods
@@ -16,6 +26,14 @@ module Utilities
       @logger || Utilities.log
     end
 
+    def config
+      AgentConfig
+    end
+
+  end
+
+  def config
+    AgentConfig
   end
 
   def log

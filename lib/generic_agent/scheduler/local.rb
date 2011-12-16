@@ -4,8 +4,8 @@ module GenericAgent
   class LocalScheduler
     include Utilities
 
-    def initialize(source)
-      @source = source
+    def initialize(instance)
+      @instance = instance
     end
 
     def shutdown_em
@@ -17,14 +17,21 @@ module GenericAgent
       EM.run do
         trap("INT") { shutdown_em }
 
-        @source.periodic do |instance|
-          instance.run
+        @instance.agents.each do |agent|
+          case agent
+          when Periodic
+            agent.run
 
-          log.info "Scheduling #{instance.name} every #{instance.interval} seconds"
-          EventMachine::PeriodicTimer.new(instance.interval) do
-            EM.defer { instance.run }
+            log.debug "Scheduling #{agent.name} every #{agent.interval} seconds"
+            EventMachine::PeriodicTimer.new(agent.interval) do
+              EM.defer { agent.run }
+            end
+          else
+            raise NotImplementedError
           end
         end
+
+        log.debug "All agents scheduled, up and running..."
       end
     end
 

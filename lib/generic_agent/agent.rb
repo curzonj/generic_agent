@@ -16,6 +16,7 @@ module GenericAgent
       def resolve_name(name)
         [ @namespace, name ].flatten.compact.join('.')
       end
+
     end
 
     def initialize(opts, &block)
